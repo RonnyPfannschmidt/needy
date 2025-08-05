@@ -35,6 +35,7 @@ test = [
 dev = [
     "ruff>=0.3.0",
     "mypy>=1.8.0",
+    "codespell>=2.2.6",
 ]
 docs = [
     "mkdocs>=1.5.0",

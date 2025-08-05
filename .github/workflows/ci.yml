@@ -1,0 +1,142 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  release:
+    types: [published]
+
+jobs:
+  build-and-inspect:
+    name: Build & inspect package
+    runs-on: ubuntu-latest
+    outputs:
+      artifact-name: ${{ steps.baipp.outputs.artifact-name }}
+      dist: ${{ steps.baipp.outputs.dist }}
+      supported_python_classifiers_json_array: ${{ steps.baipp.outputs.supported_python_classifiers_json_array }}
+      supported_python_classifiers_json_job_matrix_value: ${{ steps.baipp.outputs.supported_python_classifiers_json_job_matrix_value }}
+      package_name: ${{ steps.baipp.outputs.package_name }}
+      package_version: ${{ steps.baipp.outputs.package_version }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Required for hatch-vcs version extraction
+
+      - name: Build and inspect package
+        id: baipp
+        uses: hynek/build-and-inspect-python-package@v2
+        with:
+          attest-build-provenance-github: 'true'
+
+  test:
+    name: Test on ${{ matrix.python-version }}
+    runs-on: ubuntu-latest
+    needs: build-and-inspect
+    strategy:
+      matrix:
+        python-version: ${{ fromJSON(needs.build-and-inspect.outputs.supported_python_classifiers_json_array) }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v2
+
+      - name: Download built package
+        uses: actions/download-artifact@v4
+        with:
+          name: ${{ needs.build-and-inspect.outputs.artifact-name }}
+          path: dist
+
+      - name: Install dependencies
+        run: |
+          uv sync --group test
+
+      - name: Run tests
+        run: |
+          uv run pytest --cov=src/needy --cov-report=xml
+
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v4
+        with:
+          file: ./coverage.xml
+          fail_ci_if_error: false
+
+  docs:
+    name: Build documentation
+    runs-on: ubuntu-latest
+    needs: build-and-inspect
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v2
+
+      - name: Install dependencies
+        run: |
+          uv sync --group docs
+
+      - name: Build docs
+        run: |
+          uv run mkdocs build
+
+      - name: Upload docs artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: docs
+          path: site/
+
+  upload-to-test-pypi:
+    name: Upload to Test PyPI
+    runs-on: ubuntu-latest
+    needs: [build-and-inspect, test, docs]
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    permissions:
+      id-token: write
+
+    steps:
+      - name: Download built package
+        uses: actions/download-artifact@v4
+        with:
+          name: ${{ needs.build-and-inspect.outputs.artifact-name }}
+          path: dist
+
+      - name: Upload to Test PyPI
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          repository-url: https://test.pypi.org/legacy/
+
+  upload-to-pypi:
+    name: Upload to PyPI
+    runs-on: ubuntu-latest
+    needs: [build-and-inspect, test, docs]
+    if: github.event_name == 'release'
+    permissions:
+      id-token: write
+
+    steps:
+      - name: Download built package
+        uses: actions/download-artifact@v4
+        with:
+          name: ${{ needs.build-and-inspect.outputs.artifact-name }}
+          path: dist
+
+      - name: Upload to PyPI
+        uses: pypa/gh-action-pypi-publish@release/v1 
