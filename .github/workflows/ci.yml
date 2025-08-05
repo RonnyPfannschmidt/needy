@@ -62,9 +62,13 @@ jobs:
         run: |
           uv sync --group test
 
+      - name: Install built package
+        run: |
+          uv pip install dist/*.whl
+
       - name: Run tests
         run: |
-          uv run pytest --cov=src/needy --cov-report=xml
+          uv run pytest --cov=needy --cov-report=xml
 
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v4
