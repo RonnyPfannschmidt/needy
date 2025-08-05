@@ -1,14 +1,15 @@
 [build-system]
-requires = ["hatchling"]
+requires = ["hatchling", "hatch-vcs"]
 build-backend = "hatchling.build"
 
 [project]
 name = "needy"
+dynamic = ["version"]
 description = "An experiment about bringing together ideas from various DI systems in Python"
 readme = "README.md"
 license = {text = "MIT"}
 authors = [
-    {name = "Ronny Pfannschmidt", email = "ronny@pfannschmidt.de"},
+    {name = "Ronny Pfannschmidt", email = "opensource@ronnypfannschmidt.de"},
 ]
 classifiers = [
     "Development Status :: 3 - Alpha",

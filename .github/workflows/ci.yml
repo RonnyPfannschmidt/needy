@@ -12,6 +12,9 @@ jobs:
   build-and-inspect:
     name: Build & inspect package
     runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      attestations: write
     outputs:
       artifact-name: ${{ steps.baipp.outputs.artifact-name }}
       dist: ${{ steps.baipp.outputs.dist }}
