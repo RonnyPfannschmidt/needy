@@ -39,4 +39,4 @@ uv sync
 
 # Or with pip
 pip install -e .
-``` 
+```

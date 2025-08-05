@@ -1,16 +1,25 @@
-"""Needy - An experiment about bringing together ideas from various DI systems in Python."""
+"""Needy - A dependency injection library for Python."""
 
-import importlib.metadata
-import sys
+from ._version import __version__
+from .scopes import (
+    BaseScope,
+    BoundScopeDefinition,
+    FastAPIScope,
+    PytestScope,
+    ScopeDeclaration,
+    ScopeType,
+    has_parents,
+    root,
+)
 
-# Lazy version handling using __getattr__
-def __getattr__(name: str) -> str:
-    """Lazy attribute loading for __version__."""
-    if name == "__version__":
-        try:
-            return importlib.metadata.version("needy")
-        except importlib.metadata.PackageNotFoundError:
-            return "0.0+unknwon.error"
-    raise AttributeError(f"module '{__name__}' has no attribute '{name}'")
-
-__all__ = ["__version__"] 
+__all__ = [
+    "__version__",
+    "BaseScope",
+    "ScopeType",
+    "PytestScope",
+    "FastAPIScope",
+    "has_parents",
+    "root",
+    "ScopeDeclaration",
+    "BoundScopeDefinition",
+]

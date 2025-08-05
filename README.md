@@ -10,7 +10,7 @@ key inspirations are
 * dishka
 * svc
 * morepath
-* zope and the surrouding ecosystem
+* zope and the surrounding ecosystem
 * fastapi
 
 ## intended features
@@ -18,7 +18,7 @@ key inspirations are
 * declarations of services/resources and their lifecycles
 * scopes and their interactions (testing lifecycles vs application lifecylces - and interplay)
 * parameterization and versatile mechanisms of keeping things alive (pytest parametrize with less teardown)
-* sync/async usage -> async code, sync outside useage (any dependency that dynamically requests another should be ableto do that async as to ensure control is yielded to the system when obtaining another dependency)
+* sync/async usage -> async code, sync outside usage (any dependency that dynamically requests another should be ableto do that async as to ensure control is yielded to the system when obtaining another dependency)
 * multiple resolvers/mechanisms to provide dependencies
   * svcs is the key example for something that explicitly avoids injection
   * fastapi/dishka use types and annotations to configure the resolution
@@ -65,4 +65,3 @@ The workflow automatically:
 - Uploads to Test PyPI on every push to main
 - Uploads to PyPI on releases
 - Uses build provenance attestations for security
-  
