@@ -22,4 +22,4 @@ This document provides the API reference for Needy's scope system.
 
 ::: needy.scopes.PytestScope
 
-::: needy.scopes.FastAPIScope 
+::: needy.scopes.FastAPIScope
