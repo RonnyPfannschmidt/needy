@@ -50,7 +50,7 @@ direct_parents = PytestScope.FUNCTION.get_direct_parents()
 
 # All valid parents (including indirect parents)
 all_parents = PytestScope.FUNCTION.get_valid_parents()
-# Returns: {PytestScope.DEFINITION, PytestScope.CLASS, PytestScope.MODULE, 
+# Returns: {PytestScope.DEFINITION, PytestScope.CLASS, PytestScope.MODULE,
 #           PytestScope.PACKAGE, PytestScope.SESSION}
 ```
 
@@ -90,4 +90,4 @@ def heavy_computation():
     return expensive_operation()  # Runs once
 ```
 
-The actual scope management and dependency resolution will be handled by containers that use these scope definitions to determine when to create, cache, and clean up dependencies. 
+The actual scope management and dependency resolution will be handled by containers that use these scope definitions to determine when to create, cache, and clean up dependencies.
